@@ -1,0 +1,25 @@
+name: OrionFlow build check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Install MDM Maven plugin
+        run: mvn -B -f maven-plugin/pom.xml install -DskipTests
+
+      - name: Compile application
+        run: mvn -B compile -DskipTests
