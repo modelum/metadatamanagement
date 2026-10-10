@@ -1,7 +1,7 @@
 name: OrionFlow build check
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 jobs:
   build:
