@@ -1,5 +1,5 @@
 # This is an automatically generated file.
-name: j-dzhw-ca-queries
+name: j-dzhw-de-queries
 version: 0.0.0
 dependencies:
   codeql/java-all: "*"
