@@ -1,0 +1,231 @@
+Schema DZHW:1
+
+// Held-out DZHW experimental schema.
+// Repository: modelum/metadatamanagement
+// Frozen baseline commit:
+// 9017c614bb9e71e217d4bf11e5ef55f0cdc3dccc
+//
+// Scope: five MongoDB @Document roots selected before running OrionFlow,
+// plus the embedded value objects required to represent their structure.
+// Inherited audit/shadow fields from AbstractRdcDomainObject and
+// AbstractShadowableRdcDomainObject are intentionally omitted because
+// they are outside the selected experimental SCOs.
+
+// ---------------------------------------------------------------------
+// Embedded value objects
+// ---------------------------------------------------------------------
+
+entity I18nString
+{
+  de: String,
+  en: String
+}
+
+entity Period
+{
+  start: Timestamp,
+  end: Timestamp
+}
+
+entity GeographicCoverage
+{
+  country: String,
+  description: aggr<I18nString>?
+}
+
+entity Population
+{
+  description: aggr<I18nString>?,
+  geographicCoverages: aggr<GeographicCoverage>*,
+  unit: aggr<I18nString>?
+}
+
+entity SubDataSet
+{
+  name: String,
+  numberOfObservations: Integer,
+  accessWay: String,
+  description: aggr<I18nString>?,
+  dataFormats: Set<String>
+}
+
+entity TechnicalRepresentation
+{
+  type: String,
+  language: String,
+  source: String
+}
+
+entity FilterDetails
+{
+  expression: String,
+  description: aggr<I18nString>?,
+  expressionLanguage: String
+}
+
+entity GenerationDetails
+{
+  description: aggr<I18nString>?,
+  rule: String,
+  ruleExpressionLanguage: String
+}
+
+entity Statistics
+{
+  meanValue: Double,
+  minimum: String,
+  maximum: String,
+  skewness: Double,
+  kurtosis: Double,
+  median: String,
+  standardDeviation: Double,
+  firstQuartile: String,
+  thirdQuartile: String,
+  mode: String,
+  deviance: Double,
+  meanDeviation: Double
+}
+
+entity Missing
+{
+  code: String,
+  label: aggr<I18nString>?,
+  absoluteFrequency: Integer,
+  relativeFrequency: Double
+}
+
+entity ValidResponse
+{
+  label: aggr<I18nString>?,
+  absoluteFrequency: Integer,
+  relativeFrequency: Double,
+  value: String,
+  validRelativeFrequency: Double
+}
+
+entity Distribution
+{
+  totalAbsoluteFrequency: Integer,
+  totalValidAbsoluteFrequency: Integer,
+  totalValidRelativeFrequency: Double,
+  statistics: aggr<Statistics>?,
+  missings: aggr<Missing>*,
+  validResponses: aggr<ValidResponse>*,
+  maxNumberOfDecimalPlaces: Integer
+}
+
+entity RelatedQuestion
+{
+  instrumentNumber: String,
+  questionNumber: String,
+  relatedQuestionStrings: aggr<I18nString>?,
+  questionId: String,
+  instrumentId: String
+}
+
+// ---------------------------------------------------------------------
+// MongoDB document roots
+// ---------------------------------------------------------------------
+
+root entity DataSet
+{
+  +id: String,
+  masterId: String,
+  dataAcquisitionProjectId: String,
+  description: aggr<I18nString>?,
+  number: Integer,
+  format: aggr<I18nString>?,
+  type: aggr<I18nString>?,
+  annotations: aggr<I18nString>?,
+  surveyNumbers: List<Integer>,
+  dataPackageId: String,
+  surveyIds: List<String>,
+  subDataSets: aggr<SubDataSet>*
+}
+
+root entity Instrument
+{
+  +id: String,
+  masterId: String,
+  dataAcquisitionProjectId: String,
+  title: aggr<I18nString>?,
+  subtitle: aggr<I18nString>?,
+  description: aggr<I18nString>?,
+  number: Integer,
+  type: String,
+  annotations: aggr<I18nString>?,
+  surveyIds: List<String>,
+  surveyNumbers: List<Integer>,
+  dataPackageId: String
+}
+
+root entity Question
+{
+  +id: String,
+  masterId: String,
+  dataAcquisitionProjectId: String,
+  number: String,
+  questionText: aggr<I18nString>?,
+  topic: aggr<I18nString>?,
+  indexInInstrument: Integer,
+  instrumentId: String,
+  instrumentNumber: Integer,
+  instruction: aggr<I18nString>?,
+  introduction: aggr<I18nString>?,
+  type: aggr<I18nString>?,
+  additionalQuestionText: aggr<I18nString>?,
+  annotations: aggr<I18nString>?,
+  technicalRepresentation: aggr<TechnicalRepresentation>?,
+  successorNumbers: List<String>,
+  successors: List<String>,
+  dataPackageId: String
+}
+
+root entity Survey
+{
+  +id: String,
+  masterId: String,
+  dataAcquisitionProjectId: String,
+  title: aggr<I18nString>?,
+  population: aggr<Population>?,
+  surveyMethod: aggr<I18nString>?,
+  number: Integer,
+  fieldPeriod: aggr<Period>?,
+  sample: aggr<I18nString>?,
+  serialNumber: Integer,
+  grossSampleSize: Integer,
+  sampleSize: Integer,
+  responseRate: Double,
+  dataType: aggr<I18nString>?,
+  dataPackageId: String,
+  annotations: aggr<I18nString>?
+}
+
+root entity Variable
+{
+  +id: String,
+  masterId: String,
+  pid: String,
+  dataAcquisitionProjectId: String,
+  name: String,
+  label: aggr<I18nString>?,
+  annotations: aggr<I18nString>?,
+  dataSetId: String,
+  dataSetNumber: Integer,
+  dataType: aggr<I18nString>?,
+  storageType: String,
+  scaleLevel: aggr<I18nString>?,
+  accessWays: List<String>,
+  relatedVariables: List<String>,
+  indexInDataSet: Integer,
+  surveyNumbers: List<Integer>,
+  repeatedMeasurementIdentifier: String,
+  derivedVariablesIdentifier: String,
+  filterDetails: aggr<FilterDetails>?,
+  generationDetails: aggr<GenerationDetails>?,
+  distribution: aggr<Distribution>?,
+  relatedQuestions: aggr<RelatedQuestion>*,
+  doNotDisplayThousandsSeparator: Boolean,
+  dataPackageId: String,
+  surveyIds: List<String>
+}

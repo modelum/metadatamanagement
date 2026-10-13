@@ -1,0 +1,5 @@
+J_DZHW_CA operations
+
+USING DZHW:1
+
+CAST ATTR Survey::sampleSize TO String
